@@ -1,11 +1,14 @@
-# Etapa 1: Construir el proyecto con Maven y Java 25
-FROM maven:3.9.6-eclipse-temurin-25 AS build
+# Etapa 1: Construir el proyecto usando solo el JDK puro de Java 25
+FROM eclipse-temurin:25-jdk AS build
 WORKDIR /app
 COPY . .
-RUN mvn clean package -DskipTests
+# Le damos permisos de ejecución al archivo mvnw
+RUN chmod +x ./mvnw
+# Compilamos usando tu propio Wrapper en lugar del Maven global
+RUN ./mvnw clean package -DskipTests
 
-# Etapa 2: Correr el proyecto en un entorno ligero de Java 25
-FROM eclipse-temurin:25-jre-alpine
+# Etapa 2: Correr el proyecto en el entorno de ejecución
+FROM eclipse-temurin:25-jre
 WORKDIR /app
 COPY --from=build /app/target/Back-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8081
