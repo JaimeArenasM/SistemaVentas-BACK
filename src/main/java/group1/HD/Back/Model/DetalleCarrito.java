@@ -1,5 +1,4 @@
-package group1.HD.Back.model;
-
+package group1.HD.Back.Model;
 public class DetalleCarrito {
 
     private Long idProducto;

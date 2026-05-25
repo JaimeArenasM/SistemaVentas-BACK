@@ -1,4 +1,4 @@
-package group1.HD.Back.model;
+package group1.HD.Back.Model;
 
 import java.util.ArrayList;
 import java.util.List;
