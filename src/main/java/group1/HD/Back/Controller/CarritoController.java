@@ -1,8 +1,8 @@
-package group1.HD.Back.controller;
+package group1.HD.Back.Controller;
 
-import group1.HD.Back.dto.CarritoItemDTO;
-import group1.HD.Back.model.Carrito;
-import group1.HD.Back.service.CarritoService;
+import group1.HD.Back.Dto.CarritoItemDTO;
+import group1.HD.Back.Model.Carrito;
+import group1.HD.Back.Service.CarritoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

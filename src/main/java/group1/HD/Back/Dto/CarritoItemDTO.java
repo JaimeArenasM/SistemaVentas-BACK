@@ -1,7 +1,6 @@
-package group1.HD.Back.dto;
+package group1.HD.Back.Dto;
 
 public class CarritoItemDTO {
-
     private Long idProducto;
     private String nombreProducto;
     private int cantidad;

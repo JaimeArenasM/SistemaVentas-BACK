@@ -1,8 +1,8 @@
-package group1.HD.Back.service;
+package group1.HD.Back.Service;
 
-import group1.HD.Back.dto.CarritoItemDTO;
-import group1.HD.Back.model.Carrito;
-import group1.HD.Back.model.DetalleCarrito;
+import group1.HD.Back.Dto.CarritoItemDTO;
+import group1.HD.Back.Model.Carrito;
+import group1.HD.Back.Model.DetalleCarrito;
 import org.springframework.stereotype.Service;
 
 @Service
