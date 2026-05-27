@@ -7,6 +7,7 @@ import group1.HD.Back.service.CarritoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/carrito")
@@ -28,7 +29,7 @@ public class CarritoController {
     // Agregar producto al carrito
     @PostMapping("/items")
     public ResponseEntity<String> agregarProducto(
-            @RequestBody CarritoItemDTO dto
+            @Valid @RequestBody CarritoItemDTO dto
     ) {
 
         carritoService.agregarProducto(dto);
