@@ -3,15 +3,13 @@ package group1.HD.Back.dto;
 public class CarritoItemDTO {
 
     private Long idProducto;
-    private String nombreProducto;
-    private int cantidad;
+    private Integer cantidad;
 
     public CarritoItemDTO() {
     }
 
-    public CarritoItemDTO(Long idProducto, String nombreProducto, int cantidad) {
+    public CarritoItemDTO(Long idProducto, Integer cantidad) {
         this.idProducto = idProducto;
-        this.nombreProducto = nombreProducto;
         this.cantidad = cantidad;
     }
 
@@ -23,19 +21,11 @@ public class CarritoItemDTO {
         this.idProducto = idProducto;
     }
 
-    public String getNombreProducto() {
-        return nombreProducto;
-    }
-
-    public void setNombreProducto(String nombreProducto) {
-        this.nombreProducto = nombreProducto;
-    }
-
-    public int getCantidad() {
+    public Integer getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(int cantidad) {
+    public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
     }
 }
