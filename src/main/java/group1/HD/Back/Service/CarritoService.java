@@ -3,6 +3,7 @@ package group1.HD.Back.service;
 import group1.HD.Back.dto.CarritoItemDTO;
 import group1.HD.Back.model.Carrito;
 import group1.HD.Back.model.DetalleCarrito;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,26 +20,31 @@ public class CarritoService {
         for (DetalleCarrito item : carrito.getItems()) {
 
             if (item.getIdProducto().equals(dto.getIdProducto())) {
-                item.setCantidad(item.getCantidad() + 1);
+
+                item.setCantidad(
+                        item.getCantidad() + dto.getCantidad()
+                );
+
                 return;
             }
         }
 
         DetalleCarrito nuevoItem = new DetalleCarrito(
                 dto.getIdProducto(),
-                dto.getNombreProducto(),
                 dto.getCantidad()
         );
 
         carrito.getItems().add(nuevoItem);
     }
 
-    public void actualizarCantidad(Long idProducto, int cantidad) {
+    public void actualizarCantidad(Long idProducto, Integer cantidad) {
 
         for (DetalleCarrito item : carrito.getItems()) {
 
             if (item.getIdProducto().equals(idProducto)) {
+
                 item.setCantidad(cantidad);
+
                 return;
             }
         }
@@ -52,6 +58,7 @@ public class CarritoService {
     }
 
     public void limpiarCarrito() {
+
         carrito.getItems().clear();
     }
 }
