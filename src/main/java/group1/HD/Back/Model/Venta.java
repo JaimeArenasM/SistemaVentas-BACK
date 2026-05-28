@@ -1,8 +1,18 @@
 package group1.HD.Back.Model;
-
 import java.time.LocalDateTime;
 import java.util.List;
-import jakarta.persistence.*; /* Mejor llamarlos a todos de una vez , todos son muy utiles */
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity; /* Mejor llamarlos a todos de una vez , todos son muy utiles */
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "venta")
@@ -23,6 +33,7 @@ public class Venta {
    - Cada DetalleVenta está asociado a una única Venta.
    - 'mappedBy = "venta"' indica que el dueño de la relación es la entidad DetalleVenta. */
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
+    @JsonManagedReference /* Esto se usa para evitar la serializacion infinita , es decir que al serializar la venta no vuelva a serializar los detalles y asi sucesivamente */
     private List<DetalleVenta> detalles;
 
     public Venta() {
