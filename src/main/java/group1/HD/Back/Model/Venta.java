@@ -2,7 +2,7 @@ package group1.HD.Back.Model;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference; /* Importacion para evitar la serializacion infinita */
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity; /* Mejor llamarlos a todos de una vez , todos son muy utiles */
