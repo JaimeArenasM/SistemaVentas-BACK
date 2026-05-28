@@ -25,7 +25,7 @@ public class VentaController {
     private VentaService ventaService;
 
     @PostMapping("/checkout")
-    public Venta checkout() {
+    public Venta crearVenta() {
         return ventaService.checkout();
     }
 
