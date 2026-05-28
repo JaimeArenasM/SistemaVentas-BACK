@@ -47,7 +47,9 @@ public class VentaController {
 
         return ventaService.cambiarEstado(id, estado);
     }
-
+    /*Esta opcion es temporal */
+    /* Se devolverán todas las ventas hasta implementar autenticacion */
+    /*donde haya una relacion de Usuario->Venta*/
     @GetMapping("/mis-compras") /* Funcion del API : Listar las compras de un usuario */
     public List<Venta> misCompras() {
 
