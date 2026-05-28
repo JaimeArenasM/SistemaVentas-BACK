@@ -1,14 +1,8 @@
 package group1.HD.Back.Model;
 
 import java.time.LocalDateTime;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import java.util.List;
+import jakarta.persistence.*; /* Mejor llamarlos a todos de una vez , todos son muy utiles */
 
 @Entity
 @Table(name = "venta")
@@ -25,6 +19,12 @@ public class Venta {
     @Enumerated(EnumType.STRING) /*Esto permitirá que se guarde como texto , perfecto apra que quede unicamente como Pendiente o Pagado */
     private EstadoVenta estado;
 
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
+    /* Relación uno-a-muchos:
+   - Una Venta puede tener varios DetalleVenta.
+   - Cada DetalleVenta está asociado a una única Venta.
+   - 'mappedBy = "venta"' indica que el dueño de la relación es la entidad DetalleVenta. */
+    private List<DetalleVenta> detalles;
     public Venta() {
     }
 
