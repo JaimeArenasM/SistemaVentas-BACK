@@ -29,17 +29,17 @@ public class VentaController {
         return ventaService.checkout();
     }
 
-    @GetMapping
+    @GetMapping /* Funcion del API : Listar ventas */
     public List<Venta> obtenerVentas() {
         return ventaService.obtenerVentas();
     }
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") /* Funcion del API : Listar ventas por ID */
     public Venta obtenerVentaPorId(@PathVariable Long id) {
 
         return ventaService.obtenerVentaPorId(id);
     }
 
-    @PutMapping("/{id}/estado")
+    @PutMapping("/{id}/estado") /* Funcion del API : Cambiar estado de una venta(Pendiente o cancelada) */
     public Venta cambiarEstado(
             @PathVariable Long id,
             @RequestParam EstadoVenta estado
@@ -48,9 +48,9 @@ public class VentaController {
         return ventaService.cambiarEstado(id, estado);
     }
 
-    @GetMapping("/mis-compras")
+    @GetMapping("/mis-compras") /* Funcion del API : Listar las compras de un usuario */
     public List<Venta> misCompras() {
 
         return ventaService.obtenerVentas();
-    }
+        }
     }

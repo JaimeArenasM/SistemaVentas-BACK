@@ -58,13 +58,13 @@ public class VentaService {
         
         return ventaRepository.findAll();
     }
-    public Venta obtenerVentaPorId(Long id) {
+    public Venta obtenerVentaPorId(Long id) { /* Define la lógica para obtener una venta por su ID para ser usada después en Controller */
 
          return ventaRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
     }
 
-    public Venta cambiarEstado(Long id, EstadoVenta nuevoEstado) {
+    public Venta cambiarEstado(Long id, EstadoVenta nuevoEstado) { /* Define la lógica para cambiar el estado de una venta */
 
     Venta venta = ventaRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
