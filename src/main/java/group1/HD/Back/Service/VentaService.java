@@ -1,13 +1,15 @@
 package group1.HD.Back.Service;
-import group1.HD.Back.Model.*; /* Es mejor tener conexion con todos los modelos */
-import group1.HD.Back.Repository.VentaRepository; /*Importar el repositorio para usar sus métodos en la base de datos */
-
-import java.time.LocalDateTime;
+import java.time.LocalDateTime; /* Es mejor tener conexion con todos los modelos */
+import java.util.ArrayList; /*Importar el repositorio para usar sus métodos en la base de datos */
 import java.util.List;
-import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import group1.HD.Back.Model.DetalleVenta;
+import group1.HD.Back.Model.EstadoVenta;
+import group1.HD.Back.Model.Venta;
+import group1.HD.Back.Repository.VentaRepository;
 
 
 @Service
@@ -53,6 +55,21 @@ public class VentaService {
     }
 
     public List<Venta> obtenerVentas() {
+        
         return ventaRepository.findAll();
+    }
+    public Venta obtenerVentaPorId(Long id) {
+
+         return ventaRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
+    }
+
+    public Venta cambiarEstado(Long id, EstadoVenta nuevoEstado) {
+
+    Venta venta = ventaRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
+         venta.setEstado(nuevoEstado);
+
+         return ventaRepository.save(venta);
     }
 }
