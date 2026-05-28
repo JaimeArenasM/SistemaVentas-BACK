@@ -22,7 +22,7 @@ public class VentaController {
 
     @PostMapping
     public Venta crearVenta() {
-        return ventaService.crearVenta();
+        return ventaService.checkout();
     }
 
     @GetMapping

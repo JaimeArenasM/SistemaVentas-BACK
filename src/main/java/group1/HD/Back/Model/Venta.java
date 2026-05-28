@@ -24,14 +24,8 @@ public class Venta {
    - 'mappedBy = "venta"' indica que el dueño de la relación es la entidad DetalleVenta. */
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
     private List<DetalleVenta> detalles;
-    public Venta() {
-    }
-    public List<DetalleVenta> getDetalles() {
-        return detalles;
-    }
 
-    public void setDetalles(List<DetalleVenta> detalles) {
-        this.detalles = detalles;
+    public Venta() {
     }
     public Long getId() {
         return id;
@@ -59,5 +53,12 @@ public class Venta {
 
     public void setEstado(EstadoVenta estado) {
         this.estado = estado;
+    }
+    public List<DetalleVenta> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetalleVenta> detalles) {
+        this.detalles = detalles;
     }
 }
