@@ -18,16 +18,21 @@ public class Venta {
 
     @Enumerated(EnumType.STRING) /*Esto permitirá que se guarde como texto , perfecto apra que quede unicamente como Pendiente o Pagado */
     private EstadoVenta estado;
-
-    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
-    /* Relación uno-a-muchos:
+/* Relación uno-a-muchos:
    - Una Venta puede tener varios DetalleVenta.
    - Cada DetalleVenta está asociado a una única Venta.
    - 'mappedBy = "venta"' indica que el dueño de la relación es la entidad DetalleVenta. */
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
     private List<DetalleVenta> detalles;
     public Venta() {
     }
+    public List<DetalleVenta> getDetalles() {
+        return detalles;
+    }
 
+    public void setDetalles(List<DetalleVenta> detalles) {
+        this.detalles = detalles;
+    }
     public Long getId() {
         return id;
     }
