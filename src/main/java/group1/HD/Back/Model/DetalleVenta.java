@@ -1,6 +1,14 @@
 package group1.HD.Back.Model;
+/* Hubo un problema de creacion infinita y se importo para tener mayor control  y no volviendo a serializar al padre */
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "detalle_venta")
@@ -19,6 +27,7 @@ public class DetalleVenta {
     @ManyToOne /* Significa que muchos detalles pueden pertenecer a una sola venta , como por ejemplo piqueos y gaseosas en una misma boleta */
     /*Se usa mas que todo ya que una venta puede tener muchos detalles */
     @JoinColumn(name = "venta_id")
+    @JsonBackReference /* Evita la serializacion infinita al padre , es decir a la venta */
     private Venta venta;
 
     public DetalleVenta() {
