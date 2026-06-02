@@ -1,4 +1,4 @@
-package group1.HD.Back.Dtos.Response;
+package group1.HD.Back.Dto.Response;
 
 public class UsuarioResponse {
     private Integer idUsuario;
