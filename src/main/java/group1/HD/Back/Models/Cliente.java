@@ -1,24 +1,40 @@
 package group1.HD.Back.Models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "CLIENTE")
 public class Cliente {
    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_cliente")
     private Integer idCliente;
 
+    @OneToOne
+    @JoinColumn(name = "id_usuario",referencedColumnName = "id_usuario",nullable = false)
     private Usuario usuario;
 
+    @Column(name = "nombres", nullable = false, length = 100)
     private String nombres;
 
+    @Column(name = "apellidos", nullable = false, length = 100)
     private String apellidos;
 
+    @Column(name = "telefono", length = 15)
     private String telefono;
 
+    @Column(name = "dni", length = 8, unique = true)
     private String dni;
 
+    @Column(name = "direccion",length = 200)
     private String direccion;
 
 
