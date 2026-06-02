@@ -1,4 +1,4 @@
-package group1.HD.Back.Dtos.Request;
+package group1.HD.Back.Dto.Request;
 
 import jakarta.validation.constraints.NotBlank;
 

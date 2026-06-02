@@ -1,10 +1,12 @@
-package group1.HD.Back.Repositories;
+package group1.HD.Back.Repository;
 
-import group1.HD.Back.Models.Cliente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import group1.HD.Back.Model.Cliente;
+
 import java.util.List;
 import java.util.Optional;
 

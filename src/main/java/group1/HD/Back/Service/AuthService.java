@@ -1,17 +1,17 @@
-package group1.HD.Back.Services;
+package group1.HD.Back.Service;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import group1.HD.Back.Dtos.Request.IniciarSesionRequest;
-import group1.HD.Back.Dtos.Request.RegistroRequest;
-import group1.HD.Back.Dtos.Response.AuthResponse;
-import group1.HD.Back.Models.Cliente;
-import group1.HD.Back.Models.Usuario;
-import group1.HD.Back.Repositories.ClienteRepository;
-import group1.HD.Back.Repositories.UsuarioRepository;
+import group1.HD.Back.Dto.Request.IniciarSesionRequest;
+import group1.HD.Back.Dto.Request.RegistroRequest;
+import group1.HD.Back.Dto.Response.AuthResponse;
+import group1.HD.Back.Model.Cliente;
+import group1.HD.Back.Model.Usuario;
+import group1.HD.Back.Repository.ClienteRepository;
+import group1.HD.Back.Repository.UsuarioRepository;
 import group1.HD.Back.Security.Jwt;
 import jakarta.transaction.Transactional;
 

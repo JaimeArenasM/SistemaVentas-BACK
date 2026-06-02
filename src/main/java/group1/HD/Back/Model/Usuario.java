@@ -1,4 +1,4 @@
-package group1.HD.Back.Models;
+package group1.HD.Back.Model;
 
 import java.time.LocalDateTime;
 

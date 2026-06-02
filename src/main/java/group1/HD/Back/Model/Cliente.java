@@ -1,4 +1,4 @@
-package group1.HD.Back.Models;
+package group1.HD.Back.Model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
