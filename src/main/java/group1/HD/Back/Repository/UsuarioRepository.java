@@ -1,4 +1,4 @@
-package group1.HD.Back.Repositories;
+package group1.HD.Back.Repository;
 
 import java.util.List;
 import java.util.Optional;
