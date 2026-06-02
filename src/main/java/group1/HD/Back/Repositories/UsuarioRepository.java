@@ -11,7 +11,7 @@ import group1.HD.Back.Models.Usuario;
 
 public interface UsuarioRepository extends JpaRepository<Usuario,Integer>{
     
-    boolean exexistsByCorreo(String correo);
+    boolean existsByCorreo(String correo);
 
     /*JPQL: BUSCAR USUARIO POR CORREO EXACTO */
     @Query("SELECT u FROM Usuario u WHERE u.correo = :correo")
