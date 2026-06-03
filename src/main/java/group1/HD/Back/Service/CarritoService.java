@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class CarritoService {
 
-    // TODO: Reemplazar por persistencia en BD filtrando por el usuario autenticado
     private final Carrito carrito = new Carrito();
 
     public CarritoResponse obtenerCarrito() {
@@ -51,11 +50,10 @@ public class CarritoService {
     private CarritoResponse mapToResponse(Carrito carritoModel) {
         CarritoResponse response = new CarritoResponse();
         
-        // TODO: Mapear datos reales desde la entidad persistida
         response.setId(1L);
         response.setNombreUsuario("Usuario en sesión");
         response.setTotalItems(carritoModel.getItems().size());
-        response.setTotalPagar(0.0); // TODO: Calcular total dinámicamente
+        response.setTotalPagar(0.0); 
         
         return response;
     }

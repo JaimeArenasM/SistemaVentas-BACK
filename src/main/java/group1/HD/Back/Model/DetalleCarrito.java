@@ -1,41 +1,60 @@
 package group1.HD.Back.model;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "carrito")
-public class Carrito {
+@Table(name = "detalle_carrito")
+public class DetalleCarrito {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCarrito;
+    private Long idDetalle;
 
-    @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL)
-    private List<DetalleCarrito> items = new ArrayList<>();
+    private Long idProducto;
 
-    public Carrito() {
+    private Integer cantidad;
+
+    @ManyToOne
+    @JoinColumn(name = "id_carrito")
+    private Carrito carrito;
+
+    public DetalleCarrito() {
     }
 
-    public Carrito(Long idCarrito, List<DetalleCarrito> items) {
-        this.idCarrito = idCarrito;
-        this.items = items;
+    public DetalleCarrito(Long idProducto, Integer cantidad) {
+        this.idProducto = idProducto;
+        this.cantidad = cantidad;
     }
 
-    public Long getIdCarrito() {
-        return idCarrito;
+    public Long getIdDetalle() {
+        return idDetalle;
     }
 
-    public void setIdCarrito(Long idCarrito) {
-        this.idCarrito = idCarrito;
+    public void setIdDetalle(Long idDetalle) {
+        this.idDetalle = idDetalle;
     }
 
-    public List<DetalleCarrito> getItems() {
-        return items;
+    public Long getIdProducto() {
+        return idProducto;
     }
 
-    public void setItems(List<DetalleCarrito> items) {
-        this.items = items;
+    public void setIdProducto(Long idProducto) {
+        this.idProducto = idProducto;
+    }
+
+    public Integer getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(Integer cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public Carrito getCarrito() {
+        return carrito;
+    }
+
+    public void setCarrito(Carrito carrito) {
+        this.carrito = carrito;
     }
 }
