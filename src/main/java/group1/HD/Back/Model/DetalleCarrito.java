@@ -1,60 +1,40 @@
-package group1.HD.Back.model;
+package group1.HD.Back.Model;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
-@Table(name = "detalle_carrito")
+@Table(name = "DETALLE_CARRITO")
 public class DetalleCarrito {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idDetalle;
-
-    private Long idProducto;
-
-    private Integer cantidad;
+    @Column(name = "id_detalle_carrito")
+    private Integer idDetalleCarrito;
 
     @ManyToOne
-    @JoinColumn(name = "id_carrito")
+    @JoinColumn(name = "id_carrito", referencedColumnName = "id_carrito", nullable = false)
     private Carrito carrito;
 
-    public DetalleCarrito() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "id_producto", referencedColumnName = "id_producto", nullable = false)
+    private Producto producto;
 
-    public DetalleCarrito(Long idProducto, Integer cantidad) {
-        this.idProducto = idProducto;
-        this.cantidad = cantidad;
-    }
+    @Column(name = "cantidad", nullable = false)
+    private Integer cantidad;
 
-    public Long getIdDetalle() {
-        return idDetalle;
-    }
+    @Column(name = "subtotal", precision = 10, scale = 2)
+    private BigDecimal subtotal;
 
-    public void setIdDetalle(Long idDetalle) {
-        this.idDetalle = idDetalle;
-    }
-
-    public Long getIdProducto() {
-        return idProducto;
-    }
-
-    public void setIdProducto(Long idProducto) {
-        this.idProducto = idProducto;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public Carrito getCarrito() {
-        return carrito;
-    }
-
-    public void setCarrito(Carrito carrito) {
-        this.carrito = carrito;
-    }
+    public DetalleCarrito() {}
+    public Integer getIdDetalleCarrito() { return idDetalleCarrito; }
+    public void setIdDetalleCarrito(Integer idDetalleCarrito) { this.idDetalleCarrito = idDetalleCarrito; }
+    public Carrito getCarrito() { return carrito; }
+    public void setCarrito(Carrito carrito) { this.carrito = carrito; }
+    public Producto getProducto() { return producto; }
+    public void setProducto(Producto producto) { this.producto = producto; }
+    public Integer getCantidad() { return cantidad; }
+    public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
+    public BigDecimal getSubtotal() { return subtotal; }
+    public void setSubtotal(BigDecimal subtotal) { this.subtotal = subtotal; }
 }
