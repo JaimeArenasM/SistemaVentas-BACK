@@ -12,20 +12,20 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 public class SwaggerConfig {
     
     @Bean
-    public OpenAPI customOpenAPI(){
-        return new OpenAPI()
+public OpenAPI customOpenAPI(){
+    return new OpenAPI()
         .info(new Info()
-        .title("API Sistema de Ventas - Tienda de DonPepe")
-        .version("1.0")
-        .description("Documentacion y pruebas de los endpoints del backend"))
-        .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+            .title("API Sistema de Ventas - Tienda de DonPepe")
+            .version("1.0")
+            .description("Documentacion y pruebas de los endpoints del backend"))
         .components(new Components()
-        .addSecuritySchemes("bearerAuth", 
-            new SecurityScheme()
-            .name("bearerAuth").type(SecurityScheme.Type.HTTP)
-            .scheme("bearer")
-            .bearerFormat("JWT")
-        ));
+            .addSecuritySchemes("bearerAuth", 
+                new SecurityScheme()
+                    .name("bearerAuth")
+                    .type(SecurityScheme.Type.HTTP)
+                    .scheme("bearer")
+                    .bearerFormat("JWT")
+            ));
+}
 
-    }
 }
