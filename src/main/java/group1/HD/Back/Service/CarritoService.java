@@ -6,7 +6,6 @@ import group1.HD.Back.Dto.Response.DetalleVentaResponse;
 import group1.HD.Back.Model.Carrito;
 import group1.HD.Back.Model.Cliente;
 import group1.HD.Back.Model.DetalleCarrito;
-import group1.HD.Back.Model.DetalleVenta;
 import group1.HD.Back.Model.Producto;
 import group1.HD.Back.Repository.CarritoRepository;
 import group1.HD.Back.Repository.ClienteRepository;
