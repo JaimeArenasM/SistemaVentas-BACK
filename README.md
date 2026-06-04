@@ -19,8 +19,8 @@ Backend RESTful desarrollado con Spring Boot para la gestión integral de ventas
 |------------|---------------|-----------------|
 | **Isaac Livaque** | Gestión de Usuarios, Clientes, Autenticación JWT y Spring Security, Integración General, Despliegue y Dockerización | `feature-usuario`, `feature-seguridad`, `feature-conexionBD`, `hotfix-DockerFile` |
 | **César U.** | Gestión de Carrito y Detalle Carrito | `feature-carrito` |
-| **Sebastián** | Gestión de Categorías y Productos | `feature-categoria`, `feature-producto` |
-| **Jaime** | Gestión de Ventas y Detalle Venta | `feature-ventas` |
+| **Sebastián A.** | Gestión de Categorías y Productos | `feature-categoria`, `feature-producto` |
+| **Jaime A.** | Gestión de Ventas y Detalle Venta | `feature-ventas` |
 | **Casey R.** | Mejora de interfaz gráfica, experiencia de usuario (UI/UX) e integración Frontend | `Soporte Frontend` |
 
 </div>
