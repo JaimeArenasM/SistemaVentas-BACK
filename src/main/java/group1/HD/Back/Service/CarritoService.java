@@ -1,100 +1,133 @@
 package group1.HD.Back.Service;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-import group1.HD.Back.dto.CarritoItemDTO;
-=======
-import group1.HD.Back.Dto.Request.CarritoRequest;
+import group1.HD.Back.Dto.Request.CarritoItemRequest;
 import group1.HD.Back.Dto.Response.CarritoResponse;
->>>>>>> 941416a258aaff9c63d3b945424e730d25a0b4a0
-import group1.HD.Back.model.Carrito;
-import group1.HD.Back.model.DetalleCarrito;
-
-=======
-import group1.HD.Back.Dto.CarritoItemDTO;
+import group1.HD.Back.Dto.Response.DetalleCarritoResponse; // (Usa el mismo que creamos para ventas)
 import group1.HD.Back.Model.Carrito;
+import group1.HD.Back.Model.Cliente;
 import group1.HD.Back.Model.DetalleCarrito;
->>>>>>> 5e1d47078f6943589c00fd1e8da6c8be384a9b73
+import group1.HD.Back.Model.Producto;
+import group1.HD.Back.Repository.CarritoRepository;
+import group1.HD.Back.Repository.ClienteRepository;
+import group1.HD.Back.Repository.ProductoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CarritoService {
 
-    private final Carrito carrito = new Carrito();
+    private final CarritoRepository carritoRepository;
+    private final ProductoRepository productoRepository;
+    private final ClienteRepository clienteRepository;
 
-    public CarritoResponse obtenerCarrito() {
-        return mapToResponse(carrito);
+    public CarritoService(CarritoRepository carritoRepository, ProductoRepository productoRepository, ClienteRepository clienteRepository) {
+        this.carritoRepository = carritoRepository;
+        this.productoRepository = productoRepository;
+        this.clienteRepository = clienteRepository;
     }
 
-    public CarritoResponse agregarProducto(CarritoRequest request) {
-
-        carrito.getItems().stream()
-                .filter(item -> item.getIdProducto().equals(request.getProductoId()))
-                .findFirst()
-                .ifPresentOrElse(
-
-                        item -> item.setCantidad(
-                                item.getCantidad() + request.getCantidad()
-                        ),
-
-                        () -> {
-
-                            DetalleCarrito detalle = new DetalleCarrito(
-                                    request.getProductoId(),
-                                    request.getCantidad()
-                            );
-
-                            detalle.setCarrito(carrito);
-
-                            carrito.getItems().add(detalle);
-                        }
-                );
-
-        return mapToResponse(carrito);
+    // 1. OBTENER O CREAR EL CARRITO DEL CLIENTE
+    private Carrito obtenerCarritoEntidad(String correo) {
+        return carritoRepository.buscarCarritoActivoPorCorreo(correo).orElseGet(() -> {
+            Cliente cliente = clienteRepository.obtenerPerfilPorCorreoJPQL(correo)
+                    .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+            Carrito nuevoCarrito = new Carrito();
+            nuevoCarrito.setCliente(cliente);
+            nuevoCarrito.setEstado("activo");
+            return carritoRepository.save(nuevoCarrito);
+        });
     }
 
-    public CarritoResponse actualizarCantidad(Long idProducto, Integer cantidad) {
-
-        carrito.getItems().stream()
-                .filter(item -> item.getIdProducto().equals(idProducto))
-                .findFirst()
-                .ifPresent(item -> item.setCantidad(cantidad));
-
-        return mapToResponse(carrito);
+    public CarritoResponse obtenerMiCarrito(String correo) {
+        return mapearADto(obtenerCarritoEntidad(correo));
     }
 
-    public CarritoResponse eliminarProducto(Long idProducto) {
+    // 2. AGREGAR PRODUCTO
+    @Transactional
+    public CarritoResponse agregarProducto(String correo, CarritoItemRequest dto) {
+        Carrito carrito = obtenerCarritoEntidad(correo);
+        Producto producto = productoRepository.findById(dto.getIdProducto())
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-        carrito.getItems()
-                .removeIf(item -> item.getIdProducto().equals(idProducto));
+        // Verificamos si el producto ya está en el carrito
+        Optional<DetalleCarrito> itemExistente = carrito.getItems().stream()
+                .filter(item -> item.getProducto().getIdProducto().equals(producto.getIdProducto()))
+                .findFirst();
 
-        return mapToResponse(carrito);
+        if (itemExistente.isPresent()) {
+            // Si ya existe, le sumamos la cantidad
+            DetalleCarrito detalle = itemExistente.get();
+            detalle.setCantidad(detalle.getCantidad() + dto.getCantidad());
+            BigDecimal cantidadBD = new BigDecimal(detalle.getCantidad());
+            detalle.setSubtotal(producto.getPrecio().multiply(cantidadBD));
+        } else {
+            // Si es nuevo, lo creamos
+            DetalleCarrito nuevoItem = new DetalleCarrito();
+            nuevoItem.setCarrito(carrito);
+            nuevoItem.setProducto(producto);
+            nuevoItem.setCantidad(dto.getCantidad());
+            BigDecimal cantidadBD = new BigDecimal(dto.getCantidad());
+            nuevoItem.setSubtotal(producto.getPrecio().multiply(cantidadBD));
+            carrito.getItems().add(nuevoItem);
+        }
+
+        return mapearADto(carritoRepository.save(carrito));
     }
 
-    public CarritoResponse limpiarCarrito() {
+    // 3. ACTUALIZAR CANTIDAD EXACTA
+    @Transactional
+    public CarritoResponse actualizarCantidad(String correo, Integer idProducto, Integer cantidad) {
+        Carrito carrito = obtenerCarritoEntidad(correo);
+        
+        for (DetalleCarrito item : carrito.getItems()) {
+            if (item.getProducto().getIdProducto().equals(idProducto)) {
+                item.setCantidad(cantidad);
+                BigDecimal cantidadBD = new BigDecimal(cantidad);
+                item.setSubtotal(item.getProducto().getPrecio().multiply(cantidadBD));
+                break;
+            }
+        }
+        return mapearADto(carritoRepository.save(carrito));
+    }
 
+    // 4. ELIMINAR PRODUCTO
+    @Transactional
+    public CarritoResponse eliminarProducto(String correo, Integer idProducto) {
+        Carrito carrito = obtenerCarritoEntidad(correo);
+        carrito.getItems().removeIf(item -> item.getProducto().getIdProducto().equals(idProducto));
+        return mapearADto(carritoRepository.save(carrito));
+    }
+
+    // 5. VACIAR CARRITO
+    @Transactional
+    public CarritoResponse limpiarCarrito(String correo) {
+        Carrito carrito = obtenerCarritoEntidad(correo);
         carrito.getItems().clear();
-
-        return mapToResponse(carrito);
+        return mapearADto(carritoRepository.save(carrito));
     }
 
-    private CarritoResponse mapToResponse(Carrito carritoModel) {
+    // 6. MAPEO A DTO Y CÁLCULO DEL TOTAL
+    private CarritoResponse mapearADto(Carrito carrito) {
+        BigDecimal totalCarrito = BigDecimal.ZERO;
+        
+        List<DetalleCarritoResponse> itemsDto = carrito.getItems().stream().map(item -> {
+            return new DetalleCarritoResponse(
+                    item.getProducto().getNombre(),
+                    item.getCantidad(),
+                    item.getProducto().getPrecio(),
+                    item.getSubtotal()
+            );
+        }).collect(Collectors.toList());
 
-        CarritoResponse response = new CarritoResponse();
+        for (DetalleCarritoResponse item : itemsDto) {
+            totalCarrito = totalCarrito.add(item.getSubtotal());
+        }
 
-        response.setId(1L);
-
-        response.setNombreUsuario("Usuario en sesión");
-
-        int totalItems = carritoModel.getItems()
-                .stream()
-                .mapToInt(DetalleCarrito::getCantidad)
-                .sum();
-
-        response.setTotalItems(totalItems);
-
-        response.setTotalPagar(0.0);
-
-        return response;
+        return new CarritoResponse(carrito.getIdCarrito(), totalCarrito, itemsDto);
     }
 }
