@@ -1,6 +1,8 @@
 package group1.HD.Back.Model;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,7 +23,10 @@ public class Venta {
     private LocalDateTime fechaVenta;
 
     @Column(name = "total")
-    private Double total;
+    private BigDecimal total;
+
+    @Column(name = "metodo_pago", length = 30)
+    private String metodoPago;
 
     @Column(name = "estado", length = 20)
     private String estado; // "PENDIENTE", "PAGADO", "CANCELADO"
@@ -38,8 +43,17 @@ public class Venta {
     public void setCliente(Cliente cliente) { this.cliente = cliente; }
     public LocalDateTime getFechaVenta() { return fechaVenta; }
     public void setFechaVenta(LocalDateTime fechaVenta) { this.fechaVenta = fechaVenta; }
-    public Double getTotal() { return total; }
-    public void setTotal(Double total) { this.total = total; }
+    public BigDecimal getTotal() { return total; }
+    public void setTotal(BigDecimal total) { this.total = total; }
+
+    public String getMetodoPago() {
+        return this.metodoPago;
+    }
+
+    public void setMetodoPago(String metodoPago) {
+        this.metodoPago = metodoPago;
+    }
+
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
     public List<DetalleVenta> getDetalles() { return detalles; }

@@ -1,10 +1,11 @@
 package group1.HD.Back.Service;
-
-import group1.HD.Back.Dto.ProductoDTO;
+import group1.HD.Back.Dto.Request.ProductoRequest;
+import group1.HD.Back.Dto.Response.ProductoResponse;
 import group1.HD.Back.Model.Categoria;
 import group1.HD.Back.Model.Producto;
 import group1.HD.Back.Repository.CategoriaRepository;
 import group1.HD.Back.Repository.ProductoRepository;
+import jakarta.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,59 +14,50 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProductoService {
 
-    private final ProductoRepository productoRepository;
+   private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
 
-    public ProductoService(
-            ProductoRepository productoRepository,
-            CategoriaRepository categoriaRepository
-    ) {
+    public ProductoService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
     }
 
-    public Page<Producto> listarProductos(
-            int page,
-            int size,
-            String nombre,
-            Integer categoria
-    ) {
+    private ProductoResponse mapearAResponse(Producto p) {
+        return new ProductoResponse(
+                p.getIdProducto(), p.getCategoria().getNombre(), p.getNombre(), 
+                p.getDescripcion(), p.getPrecio(), p.getStock(), p.getImagenUrl(), p.getEstado()
+        );
+    }
 
+    // Paginación inteligente
+    public Page<ProductoResponse> listarProductos(int page, int size, String nombre, Integer categoria) {
         PageRequest pageable = PageRequest.of(page, size);
+        Page<Producto> paginaEntidades;
 
-        if (nombre != null) {
-            return productoRepository
-                    .findByNombreContainingIgnoreCaseAndEstado(
-                            nombre,
-                            "activo",
-                            pageable
-                    );
+        if (nombre != null && !nombre.isEmpty()) {
+            paginaEntidades = productoRepository.buscarPorNombreJPQL(nombre, pageable);
+        } else if (categoria != null) {
+            paginaEntidades = productoRepository.buscarPorCategoriaJPQL(categoria, pageable);
+        } else {
+            paginaEntidades = productoRepository.listarActivos(pageable);
         }
 
-        if (categoria != null) {
-            return productoRepository
-                    .findByCategoria_IdCategoriaAndEstado(
-                            categoria,
-                            "activo",
-                            pageable
-                    );
-        }
-
-        return productoRepository.findByEstado("activo", pageable);
+        // Convertimos la página de Entidades a una página de DTOs usando .map()
+        return paginaEntidades.map(this::mapearAResponse);
     }
 
-    public Producto obtenerProducto(Integer id) {
-        return productoRepository.findById(id).orElse(null);
+    public ProductoResponse obtenerProducto(Integer id) {
+        Producto p = productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        return mapearAResponse(p);
     }
 
-    public Producto crearProducto(ProductoDTO dto) {
-
-        Categoria categoria = categoriaRepository
-                .findById(dto.getIdCategoria())
-                .orElseThrow();
+    @Transactional
+    public ProductoResponse crearProducto(ProductoRequest dto) {
+        Categoria categoria = categoriaRepository.findById(dto.getIdCategoria())
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
         Producto producto = new Producto();
-
         producto.setCategoria(categoria);
         producto.setNombre(dto.getNombre());
         producto.setDescripcion(dto.getDescripcion());
@@ -74,16 +66,16 @@ public class ProductoService {
         producto.setImagenUrl(dto.getImagenUrl());
         producto.setEstado("activo");
 
-        return productoRepository.save(producto);
+        return mapearAResponse(productoRepository.save(producto));
     }
 
-    public Producto actualizarProducto(Integer id, ProductoDTO dto) {
+    @Transactional
+    public ProductoResponse actualizarProducto(Integer id, ProductoRequest dto) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-        Producto producto = productoRepository.findById(id).orElseThrow();
-
-        Categoria categoria = categoriaRepository
-                .findById(dto.getIdCategoria())
-                .orElseThrow();
+        Categoria categoria = categoriaRepository.findById(dto.getIdCategoria())
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
         producto.setCategoria(categoria);
         producto.setNombre(dto.getNombre());
@@ -92,15 +84,14 @@ public class ProductoService {
         producto.setStock(dto.getStock());
         producto.setImagenUrl(dto.getImagenUrl());
 
-        return productoRepository.save(producto);
+        return mapearAResponse(productoRepository.save(producto));
     }
 
+    @Transactional
     public void eliminarProducto(Integer id) {
-
-        Producto producto = productoRepository.findById(id).orElseThrow();
-
-        producto.setEstado("inactivo");
-
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        producto.setEstado("inactivo"); // Eliminación lógica
         productoRepository.save(producto);
     }
 }

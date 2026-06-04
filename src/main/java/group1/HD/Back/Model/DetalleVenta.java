@@ -1,4 +1,6 @@
 package group1.HD.Back.Model;
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,7 +32,7 @@ public class DetalleVenta {
     private Integer cantidad;
 
     @Column(name = "precio_unitario")
-    private Double precioUnitario;
+    private BigDecimal precioUnitario;
 
     public DetalleVenta() {}
 
@@ -43,6 +45,6 @@ public class DetalleVenta {
     public void setProducto(Producto producto) { this.producto = producto; }
     public Integer getCantidad() { return cantidad; }
     public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
-    public Double getPrecioUnitario() { return precioUnitario; }
-    public void setPrecioUnitario(Double precioUnitario) { this.precioUnitario = precioUnitario; }
+    public BigDecimal getPrecioUnitario() { return precioUnitario; }
+    public void setPrecioUnitario(BigDecimal precioUnitario) { this.precioUnitario = precioUnitario; }
 }

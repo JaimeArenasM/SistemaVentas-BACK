@@ -1,18 +1,35 @@
-package group1.HD.Back.Dto;
+package group1.HD.Back.Dto.Request;
 
 import java.math.BigDecimal;
 
-public class ProductoDTO {
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
+public class ProductoRequest {
+
+    @NotNull(message = "La categoría es obligatoria")
     private Integer idCategoria;
+
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
+
     private String descripcion;
+
+    @NotNull(message = "El precio es obligatorio")
+    @Min(value = 0, message = "El precio no puede ser negativo")
     private BigDecimal precio;
+
+    @NotNull(message = "El stock es obligatorio")
+    @Min(value = 0, message = "El stock no puede ser negativo")
     private Integer stock;
+
     private String imagenUrl;
 
-    // GETTERS Y SETTERS
+    public ProductoRequest() {
+    }
 
+    // Getters y Setters
     public Integer getIdCategoria() {
         return idCategoria;
     }
