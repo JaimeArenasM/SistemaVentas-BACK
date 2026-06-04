@@ -2,14 +2,15 @@
 
 # 🛒 Sistema de Ventas - Tienda de Don Pepe
 
-Backend RESTful desarrollado con Spring Boot para la gestión integral de ventas, usuarios, productos, categorías, carritos y seguridad JWT.
+Backend RESTful profesional desarrollado con Spring Boot para la gestión integral de ventas, usuarios, productos, categorías, carritos y seguridad JWT. 
 
 ![Java](https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 ![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
+![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
+![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
 
 ---
 
@@ -17,10 +18,10 @@ Backend RESTful desarrollado con Spring Boot para la gestión integral de ventas
 
 | Integrante | Rol Principal | Ramas Asignadas |
 |------------|---------------|-----------------|
-| **Isaac Livaque** | Gestión de Usuarios, Clientes, Autenticación JWT y Spring Security, Integración General, Despliegue y Dockerización | `feature-usuario`, `feature-seguridad`, `feature-conexionBD`, `hotfix-DockerFile` |
+| **Isaac Livaque** | Gestión de Usuarios, Clientes, Autenticación JWT y Spring Security, Despliegue en Render y Docker | `feature-usuario`, `feature-seguridad`, `feature-conexionBD` |
 | **César U.** | Gestión de Carrito y Detalle Carrito | `feature-carrito` |
-| **Sebastián A.** | Gestión de Categorías y Productos e Integración de ambas ramas | `feature-categoria-producto`, `feature-categoria`, `feature-producto` |
-| **Jaime A.** | Gestión de Ventas y Detalle Venta | `feature-ventas` |
+| **Sebastián A.** | Gestión de Categorías y Productos, Paginación e Integración | `feature-categoria`, `feature-producto` |
+| **Jaime A.** | Gestión de Ventas, Lógica Transaccional y Detalle Venta | `feature-ventas` |
 | **Casey R.** | Mejora de interfaz gráfica, experiencia de usuario (UI/UX) e integración Frontend | `Soporte Frontend` |
 
 </div>
@@ -29,228 +30,103 @@ Backend RESTful desarrollado con Spring Boot para la gestión integral de ventas
 
 ## 📖 Sobre el Proyecto
 
-El backend de Don Pepe es una API REST desarrollada con Spring Boot que proporciona toda la lógica de negocio para la plataforma de ventas. Permite administrar usuarios, clientes, productos, categorías, carritos y ventas mediante endpoints seguros protegidos con JWT y control de acceso basado en roles.
+El backend de la **Tienda de Don Pepe** es una API REST robusta desarrollada con Spring Boot. Proporciona toda la lógica de negocio para la plataforma de ventas, permitiendo administrar usuarios, clientes, productos, categorías, carritos y ventas. 
 
-La aplicación sigue una arquitectura multicapa utilizando Spring Security, Spring Data JPA y PostgreSQL, permitiendo una integración eficiente con el frontend Angular.
-
----
-
-## 🏗️ Arquitectura del Sistema
-
-### 🔐 Seguridad
-
-- Autenticación mediante JWT.
-- Spring Security.
-- Protección de endpoints por roles.
-- Gestión de sesiones basada en tokens.
-- Encriptación de contraseñas mediante BCrypt.
-
-### 👤 Gestión de Usuarios
-
-- Registro de usuarios.
-- Inicio de sesión.
-- Administración de perfiles.
-- Asociación Usuario ↔ Cliente.
-
-### 📦 Gestión de Productos
-
-- CRUD completo de productos.
-- Administración de categorías.
-- Control de stock.
-- Filtrado y búsqueda.
-
-### 🛒 Gestión de Carrito
-
-- Carrito activo por usuario.
-- Agregado y eliminación de productos.
-- Actualización de cantidades.
-- Limpieza completa del carrito.
-
-### 💰 Gestión de Ventas
-
-- Checkout completo.
-- Generación automática de ventas.
-- Registro de detalles de venta.
-- Actualización de estados.
-- Historial de compras.
+La aplicación destaca por implementar **Arquitectura Limpia**, utilizando fuertemente el **Patrón DTO (Data Transfer Object)** para separar la base de datos de las respuestas HTTP, el manejo centralizado de excepciones (Global Exception Handler) y la documentación automatizada con OpenAPI 3.0. Todo el sistema está protegido mediante JWT y control de acceso basado en roles.
 
 ---
 
-## 🎯 Endpoints Principales
+## 🏗️ Arquitectura y Características Clave
 
-### 🔐 Autenticación y Seguridad
+### 🔐 Seguridad y Autenticación
+- Autenticación Stateless mediante **JWT (JSON Web Tokens)**.
+- Protección de endpoints por roles (`admin`, `cliente`).
+- Encriptación de contraseñas mediante **BCrypt**.
 
-**Responsable:** Isaac
+### 📦 Gestión de Inventario (Paginada)
+- CRUD completo de Productos y Categorías.
+- **Paginación inteligente (`Pageable`)** para evitar sobrecarga de la base de datos.
+- Validaciones estrictas de `@NotBlank`, `@Min` para evitar datos corruptos.
 
-```http
-POST /api/auth/login
-POST /api/auth/register
-GET  /api/auth/me
+### 🛒 Carrito de Compras Persistente
+- Carrito vinculado dinámicamente al Token del usuario logueado.
+- Actualización de cantidades y cálculo de subtotales con precisión financiera (`BigDecimal`).
 
-GET  /api/usuarios
-
-PUT  /api/clientes/perfil
-```
-
-#### Funcionalidades
-
-- Login mediante JWT.
-- Registro de usuarios.
-- Consulta de usuario autenticado.
-- Administración de usuarios.
-- Actualización de perfil.
+### 💰 Motor de Ventas (Transaccional)
+- Endpoint de *Checkout* protegido con `@Transactional` (Rollback automático).
+- Generación de historial inmutable de comprobantes.
 
 ---
 
-### 📂 Categorías
+## 🎯 Endpoints Principales (Documentados en Swagger)
 
-**Responsable:** Sebastián
+*La documentación interactiva está disponible en la ruta `/v3/api-docs` y es compatible con Apidog y Postman.*
 
-```http
-GET    /api/categorias
-POST   /api/categorias
-PUT    /api/categorias/{id}
-DELETE /api/categorias/{id}
-```
+### 🔐 Autenticación y Usuarios
+- `POST /api/auth/login` ➔ Genera el token JWT
+- `POST /api/auth/register` ➔ Registra un nuevo cliente
+- `GET /api/auth/me` ➔ Devuelve el perfil del token actual
+- `GET /api/usuarios` ➔ *(Admin)* Lista usuarios
+- `PUT /api/clientes/perfil` ➔ Actualiza datos del cliente
 
-#### Funcionalidades
+### 📂 Categorías e 📦 Inventario
+- `GET /api/categorias` ➔ Lista para el ComboBox del Frontend
+- `POST /api/categorias` ➔ *(Admin)* Crea categoría
+- `GET /api/productos?page=0&size=10` ➔ Catálogo paginado y filtrado
+- `POST /api/productos` ➔ *(Admin)* Registra producto
+- `PUT /api/productos/{id}` ➔ *(Admin)* Edita producto
+- `DELETE /api/productos/{id}` ➔ *(Admin)* Baja lógica (Inactivo)
 
-- Crear categorías.
-- Actualizar categorías.
-- Listar categorías.
-- Eliminar categorías.
+### 🛒 Carrito de Compras
+- `GET /api/carrito` ➔ Recupera el carrito del usuario logueado
+- `POST /api/carrito/items` ➔ Agrega un producto
+- `PUT /api/carrito/items/{id}` ➔ Actualiza cantidad exacta
+- `DELETE /api/carrito/items/{id}` ➔ Quita un producto
+- `DELETE /api/carrito/limpiar` ➔ Vacía el carrito
 
----
-
-### 📦 Productos
-
-**Responsable:** Sebastián
-
-```http
-GET    /api/productos
-GET    /api/productos/{id}
-
-POST   /api/productos
-
-PUT    /api/productos/{id}
-
-DELETE /api/productos/{id}
-```
-
-#### Funcionalidades
-
-- CRUD completo de productos.
-- Gestión de inventario.
-- Actualización de stock.
-- Filtros por nombre y categoría.
-
----
-
-### 🛒 Carrito y Detalle Carrito
-
-**Responsable:** César
-
-```http
-GET /api/carrito
-
-POST /api/carrito/items
-
-PUT /api/carrito/items/{idProducto}
-
-DELETE /api/carrito/items/{idProducto}
-
-DELETE /api/carrito/limpiar
-```
-
-#### Funcionalidades
-
-- Obtener carrito activo.
-- Agregar productos.
-- Modificar cantidades.
-- Eliminar productos.
-- Vaciar carrito.
-
----
-
-### 💰 Ventas y Detalle Venta
-
-**Responsable:** Jaime
-
-```http
-POST /api/ventas/checkout
-
-GET /api/ventas/mis-compras
-
-GET /api/ventas
-
-GET /api/ventas/{id}
-
-PUT /api/ventas/{id}/estado
-```
-
-#### Funcionalidades
-
-- Procesar compras.
-- Registrar ventas.
-- Registrar detalle de venta.
-- Consultar historial.
-- Gestionar estados.
+### 💰 Ventas y Facturación
+- `POST /api/ventas/checkout` ➔ Procesa el carrito y genera la venta
+- `GET /api/ventas/mis-compras` ➔ Historial personal del cliente
+- `GET /api/ventas` ➔ *(Admin)* Historial general de la tienda
+- `PUT /api/ventas/{id}/estado` ➔ *(Admin)* Cambia estado a PAGADO/ANULADO
 
 ---
 
 ## 🗄️ Modelo Relacional
 
-```text
-USUARIO
+<pre>
+USUARIO (Credenciales y Roles)
 │
-└── CLIENTE
+└── CLIENTE (Datos personales)
      │
-     ├── CARRITO
+     ├── CARRITO (Activo/Abandonado)
      │      │
-     │      └── DETALLE_CARRITO
+     │      └── DETALLE_CARRITO (Producto + Cantidad)
      │
-     └── VENTA
-             │
-             └── DETALLE_VENTA
+     └── VENTA (Historial Inmutable)
+            │
+            └── DETALLE_VENTA (Precio al momento de compra)
 
-PRODUCTO
+CATEGORIA
 │
-└── CATEGORIA
-```
+└── PRODUCTO (Stock dinámico y Precio)
+</pre>
 
 ---
 
 ## ⚙️ Tecnologías Utilizadas
 
-### Backend
-
-- Java 21
-- Spring Boot 3
-- Spring Web
-- Spring Data JPA
-- Spring Security
-
-### Base de Datos
-
-- PostgreSQL
-
-### Seguridad
-
-- JWT Authentication
-- BCrypt Password Encoder
-
-### Herramientas
-
-- Maven
-- Git
-- GitHub
-- Docker
+- **Core:** Java 21, Spring Boot 3
+- **Base de Datos:** PostgreSQL, Spring Data JPA, Hibernate
+- **Seguridad:** Spring Security, JWT
+- **Documentación:** Springdoc OpenAPI (Swagger UI)
+- **Despliegue y Pruebas:** Render, Docker, Apidog
 
 ---
 
 ## 🌿 Flujo de Trabajo (GitFlow)
 
-```text
+<pre>
 main
 │
 ├── dev
@@ -261,78 +137,22 @@ main
 ├── feature-categoria
 ├── feature-producto
 ├── feature-ventas
-├── feature-conexionBD
-│
 └── hotfix-DockerFile
-```
-
-### Reglas de Trabajo
-
-- `main` → Producción estable.
-- `dev` → Integración y pruebas.
-- `feature/*` → Desarrollo individual por módulo.
-- `hotfix/*` → Correcciones urgentes.
+</pre>
 
 ---
 
-## 📁 Arquitectura de Carpetas
+## 📁 Arquitectura del Proyecto
 
-```text
-src/
-└── main/
-    ├── java/
-    │   └── com.donpepe/
-    │
-    ├── config/
-    │   ├── SecurityConfig.java
-    │   ├── JwtFilter.java
-    │   ├── JwtService.java
-    │   └── CorsConfig.java
-    │
-    ├── controller/
-    │   ├── AuthController.java
-    │   ├── UsuarioController.java
-    │   ├── ClienteController.java
-    │   ├── CategoriaController.java
-    │   ├── ProductoController.java
-    │   ├── CarritoController.java
-    │   └── VentaController.java
-    │
-    ├── service/
-    │   ├── AuthService.java
-    │   ├── UsuarioService.java
-    │   ├── ClienteService.java
-    │   ├── CategoriaService.java
-    │   ├── ProductoService.java
-    │   ├── CarritoService.java
-    │   └── VentaService.java
-    │
-    ├── repository/
-    │   ├── UsuarioRepository.java
-    │   ├── ClienteRepository.java
-    │   ├── CategoriaRepository.java
-    │   ├── ProductoRepository.java
-    │   ├── CarritoRepository.java
-    │   └── VentaRepository.java
-    │
-    ├── model/
-    │   ├── Usuario.java
-    │   ├── Cliente.java
-    │   ├── Categoria.java
-    │   ├── Producto.java
-    │   ├── Carrito.java
-    │   ├── DetalleCarrito.java
-    │   ├── Venta.java
-    │   └── DetalleVenta.java
-    │
-    ├── dto/
-    ├── exception/
-    ├── mapper/
-    │
-    └── SistemaVentasApplication.java
-    │
-    └── resources/
-        ├── application.properties
-        ├── application-dev.properties
-        └── data.sql
-```
+<pre>
+src/main/java/group1/HD/Back/
+ ├── Configs/         # Configuraciones globales (Swagger, Cors)
+ ├── Controller/      # Puntos de entrada HTTP de la API REST
+ ├── Dto/             # Envases Request/Response
+ ├── Exception/       # Interceptor global de errores
+ ├── Model/           # Entidades JPA (PostgreSQL)
+ ├── Repository/      # Interfaces de acceso a datos
+ ├── Security/        # Filtros JWT y Spring Security
+ ├── Service/         # Lógica de negocio y transacciones
+ └── BackApplication.java
+</pre>
