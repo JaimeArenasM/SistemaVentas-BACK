@@ -1,30 +1,23 @@
-package group1.HD.Back.repository;
+package group1.HD.Back.Repository;
 
-import group1.HD.Back.model.Producto;
-import org.springframework.stereotype.Repository;
+import group1.HD.Back.Model.Producto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-import java.util.ArrayList;
-import java.util.List;
+public interface ProductoRepository extends JpaRepository<Producto, Integer> {
 
-@Repository
-public class ProductoRepository {
+// JPQL: Listar todos los activos con paginación
+    @Query("SELECT p FROM Producto p WHERE p.estado = 'activo'")
+    Page<Producto> listarActivos(Pageable pageable);
 
-    private final List<Producto> productos = new ArrayList<>();
+    // JPQL: Buscar por nombre (ignorando mayúsculas) y estado activo
+    @Query("SELECT p FROM Producto p WHERE LOWER(p.nombre) LIKE LOWER(CONCAT('%', :nombre, '%')) AND p.estado = 'activo'")
+    Page<Producto> buscarPorNombreJPQL(@Param("nombre") String nombre, Pageable pageable);
 
-    public List<Producto> listarProductos() {
-        return productos;
-    }
-
-    public Producto buscarPorId(Long idProducto) {
-
-        return productos.stream()
-                .filter(producto ->
-                        producto.getIdProducto().equals(idProducto))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public void guardarProducto(Producto producto) {
-        productos.add(producto);
-    }
+    // JPQL: Filtrar por categoría y estado activo
+    @Query("SELECT p FROM Producto p JOIN p.categoria c WHERE c.idCategoria = :idCategoria AND p.estado = 'activo'")
+    Page<Producto> buscarPorCategoriaJPQL(@Param("idCategoria") Integer idCategoria, Pageable pageable);
 }

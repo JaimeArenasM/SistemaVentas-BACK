@@ -1,4 +1,4 @@
-package group1.HD.Back.dto;
+package group1.HD.Back.Dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
