@@ -35,8 +35,11 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+               // Rutas públicas (Login, Registro y catálogo de productos)
                 .requestMatchers("/api/auth/**", "/api/productos/**").permitAll()
+                // Rutas exclusivas del administrador
                 .requestMatchers("/api/usuarios/**").hasAuthority("admin")
+               // Todo lo demás requiere estar autenticado
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
