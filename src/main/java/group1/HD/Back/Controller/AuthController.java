@@ -24,12 +24,12 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/login")
+    @PostMapping("/iniciarSesion")
     public ResponseEntity <AuthResponse> login(@Valid @RequestBody IniciarSesionRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
     
-    @PostMapping("/register")
+    @PostMapping("/registrar")
     public ResponseEntity <AuthResponse> register(@Valid @RequestBody RegistroRequest request) {
         return ResponseEntity.ok(authService.registrarCliente(request));
     }
