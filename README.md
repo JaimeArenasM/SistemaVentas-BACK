@@ -1,6 +1,6 @@
 <div align="center">
 
-# ☕ Sistema de Ventas - Tienda de Don Pepe
+# 🛒 Sistema de Ventas - Tienda de Don Pepe
 
 Backend RESTful desarrollado con Spring Boot para la gestión integral de ventas, usuarios, productos, categorías, carritos y seguridad JWT.
 
