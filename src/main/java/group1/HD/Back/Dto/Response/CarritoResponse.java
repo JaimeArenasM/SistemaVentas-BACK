@@ -6,14 +6,14 @@ import java.util.List;
 public class CarritoResponse {
     private Integer idCarrito;
     private BigDecimal totalCarrito;
-    private List<DetalleCarritoResponse> items;
+    private List<DetalleVentaResponse> items;
 
-    public CarritoResponse(Integer idCarrito, BigDecimal totalCarrito, List<DetalleCarritoResponse> items) {
+    public CarritoResponse(Integer idCarrito, BigDecimal totalCarrito, List<DetalleVentaResponse> items) {
         this.idCarrito = idCarrito;
         this.totalCarrito = totalCarrito;
         this.items = items;
     }
     public Integer getIdCarrito() { return idCarrito; }
     public BigDecimal getTotalCarrito() { return totalCarrito; }
-    public List<DetalleCarritoResponse> getItems() { return items; }
+    public List<DetalleVentaResponse> getItems() { return items; }
 }

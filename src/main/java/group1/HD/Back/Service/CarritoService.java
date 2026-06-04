@@ -1,11 +1,12 @@
 package group1.HD.Back.Service;
 
-import group1.HD.Back.Dto.Request.CarritoItemRequest;
+import group1.HD.Back.Dto.Request.CarritoRequest;
 import group1.HD.Back.Dto.Response.CarritoResponse;
-import group1.HD.Back.Dto.Response.DetalleCarritoResponse; // (Usa el mismo que creamos para ventas)
+import group1.HD.Back.Dto.Response.DetalleVentaResponse;
 import group1.HD.Back.Model.Carrito;
 import group1.HD.Back.Model.Cliente;
 import group1.HD.Back.Model.DetalleCarrito;
+import group1.HD.Back.Model.DetalleVenta;
 import group1.HD.Back.Model.Producto;
 import group1.HD.Back.Repository.CarritoRepository;
 import group1.HD.Back.Repository.ClienteRepository;
@@ -49,7 +50,7 @@ public class CarritoService {
 
     // 2. AGREGAR PRODUCTO
     @Transactional
-    public CarritoResponse agregarProducto(String correo, CarritoItemRequest dto) {
+    public CarritoResponse agregarProducto(String correo, CarritoRequest dto) {
         Carrito carrito = obtenerCarritoEntidad(correo);
         Producto producto = productoRepository.findById(dto.getIdProducto())
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
@@ -115,8 +116,8 @@ public class CarritoService {
     private CarritoResponse mapearADto(Carrito carrito) {
         BigDecimal totalCarrito = BigDecimal.ZERO;
         
-        List<DetalleCarritoResponse> itemsDto = carrito.getItems().stream().map(item -> {
-            return new DetalleCarritoResponse(
+        List<DetalleVentaResponse> itemsDto = carrito.getItems().stream().map(item -> {
+            return new DetalleVentaResponse(
                     item.getProducto().getNombre(),
                     item.getCantidad(),
                     item.getProducto().getPrecio(),
@@ -124,7 +125,7 @@ public class CarritoService {
             );
         }).collect(Collectors.toList());
 
-        for (DetalleCarritoResponse item : itemsDto) {
+        for (DetalleVentaResponse item : itemsDto) {
             totalCarrito = totalCarrito.add(item.getSubtotal());
         }
 

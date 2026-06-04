@@ -10,13 +10,10 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // 1. Atrapa los errores de los DTOs (@NotBlank, @Min, @Pattern, etc.)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-
-    public Map<String, String> manejarValidaciones(
-            MethodArgumentNotValidException ex
-    ) {
-
+    public Map<String, String> manejarValidaciones(MethodArgumentNotValidException ex) {
         Map<String, String> errores = new HashMap<>();
 
         ex.getBindingResult().getFieldErrors().forEach(error ->
@@ -28,4 +25,5 @@ public class GlobalExceptionHandler {
 
         return errores;
     }
+ 
 }

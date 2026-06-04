@@ -1,69 +1,57 @@
-<<<<<<< HEAD
 package group1.HD.Back.Controller;
 
-import group1.HD.Back.Dto.CarritoItemDTO;
-import group1.HD.Back.Model.Carrito;
+import group1.HD.Back.Dto.Request.CarritoRequest;
+import group1.HD.Back.Dto.Response.CarritoResponse;
 import group1.HD.Back.Service.CarritoService;
-=======
-package group1.HD.Back.Controller; // Ojo: Verifica si tu carpeta es Controller o controller (con C mayúscula como en la imagen)
-
-import group1.HD.Back.Dto.Request.CarritoRequest; // Cambiamos el import
-import group1.HD.Back.Dto.Response.CarritoResponse; // Agregamos el import del Response
-import group1.HD.Back.service.CarritoService;
->>>>>>> 941416a258aaff9c63d3b945424e730d25a0b4a0
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/carrito")
-@CrossOrigin(origins = "*")
 public class CarritoController {
 
-    @Autowired
-    private CarritoService carritoService;
+    private final CarritoService carritoService;
 
-    // Obtener carrito
+    public CarritoController(CarritoService carritoService) {
+        this.carritoService = carritoService;
+    }
+
     @GetMapping
-    public ResponseEntity<CarritoResponse> obtenerCarrito() { // Cambiamos el retorno a CarritoResponse
-        CarritoResponse carrito = carritoService.obtenerCarrito();
-        return ResponseEntity.ok(carrito);
+    public ResponseEntity<CarritoResponse> obtenerCarrito(Authentication authentication) {
+        String correo = authentication.getName();
+        return ResponseEntity.ok(carritoService.obtenerMiCarrito(correo));
     }
 
-    // Agregar producto al carrito
     @PostMapping("/items")
-    public ResponseEntity<CarritoResponse> agregarProducto( // Cambiamos el retorno a CarritoResponse
-            @Valid @RequestBody CarritoRequest request       // Cambiamos CarritoItemDTO a CarritoRequest
-    ) {
-        CarritoResponse carritoActualizado = carritoService.agregarProducto(request);
-        return ResponseEntity.ok(carritoActualizado); // Ahora devolvemos el carrito actualizado, no un String
+    public ResponseEntity<CarritoResponse> agregarProducto(
+            Authentication authentication, 
+            @Valid @RequestBody CarritoRequest dto) {
+        String correo = authentication.getName();
+        return ResponseEntity.ok(carritoService.agregarProducto(correo, dto));
     }
 
-    // Actualizar cantidad de un producto
     @PutMapping("/items/{idProducto}")
-    public ResponseEntity<CarritoResponse> actualizarCantidad( // Cambiamos el retorno
-            @PathVariable Long idProducto,
-            @RequestParam Integer cantidad
-    ) {
-        CarritoResponse carritoActualizado = carritoService.actualizarCantidad(idProducto, cantidad);
-        return ResponseEntity.ok(carritoActualizado);
+    public ResponseEntity<CarritoResponse> actualizarCantidad(
+            Authentication authentication,
+            @PathVariable Integer idProducto,
+            @RequestParam Integer cantidad) {
+        String correo = authentication.getName();
+        return ResponseEntity.ok(carritoService.actualizarCantidad(correo, idProducto, cantidad));
     }
 
-    // Eliminar producto del carrito
     @DeleteMapping("/items/{idProducto}")
-    public ResponseEntity<CarritoResponse> eliminarProducto( // Cambiamos el retorno
-            @PathVariable Long idProducto
-    ) {
-        CarritoResponse carritoActualizado = carritoService.eliminarProducto(idProducto);
-        return ResponseEntity.ok(carritoActualizado);
+    public ResponseEntity<CarritoResponse> eliminarProducto(
+            Authentication authentication,
+            @PathVariable Integer idProducto) {
+        String correo = authentication.getName();
+        return ResponseEntity.ok(carritoService.eliminarProducto(correo, idProducto));
     }
 
-    // Vaciar carrito completo
     @DeleteMapping("/limpiar")
-    public ResponseEntity<CarritoResponse> limpiarCarrito() { // Cambiamos el retorno
-        CarritoResponse carritoVacio = carritoService.limpiarCarrito();
-        return ResponseEntity.ok(carritoVacio);
+    public ResponseEntity<CarritoResponse> limpiarCarrito(Authentication authentication) {
+        String correo = authentication.getName();
+        return ResponseEntity.ok(carritoService.limpiarCarrito(correo));
     }
 }
