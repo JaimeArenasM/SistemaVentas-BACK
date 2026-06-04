@@ -1,7 +1,4 @@
 package group1.HD.Back.Model;
-/* Hubo un problema de creacion infinita y se importo para tener mayor control  y no volviendo a serializar al padre */
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
