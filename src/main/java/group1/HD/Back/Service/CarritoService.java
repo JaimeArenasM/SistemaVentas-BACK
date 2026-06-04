@@ -1,7 +1,12 @@
 package group1.HD.Back.Service;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import group1.HD.Back.dto.CarritoItemDTO;
+=======
+import group1.HD.Back.Dto.Request.CarritoRequest;
+import group1.HD.Back.Dto.Response.CarritoResponse;
+>>>>>>> 941416a258aaff9c63d3b945424e730d25a0b4a0
 import group1.HD.Back.model.Carrito;
 import group1.HD.Back.model.DetalleCarrito;
 
@@ -17,54 +22,79 @@ public class CarritoService {
 
     private final Carrito carrito = new Carrito();
 
-    public Carrito obtenerCarrito() {
-        return carrito;
+    public CarritoResponse obtenerCarrito() {
+        return mapToResponse(carrito);
     }
 
-    public void agregarProducto(CarritoItemDTO dto) {
+    public CarritoResponse agregarProducto(CarritoRequest request) {
 
-        for (DetalleCarrito item : carrito.getItems()) {
+        carrito.getItems().stream()
+                .filter(item -> item.getIdProducto().equals(request.getProductoId()))
+                .findFirst()
+                .ifPresentOrElse(
 
-            if (item.getIdProducto().equals(dto.getIdProducto())) {
+                        item -> item.setCantidad(
+                                item.getCantidad() + request.getCantidad()
+                        ),
 
-                item.setCantidad(
-                        item.getCantidad() + dto.getCantidad()
+                        () -> {
+
+                            DetalleCarrito detalle = new DetalleCarrito(
+                                    request.getProductoId(),
+                                    request.getCantidad()
+                            );
+
+                            detalle.setCarrito(carrito);
+
+                            carrito.getItems().add(detalle);
+                        }
                 );
 
-                return;
-            }
-        }
-
-        DetalleCarrito nuevoItem = new DetalleCarrito(
-                dto.getIdProducto(),
-                dto.getCantidad()
-        );
-
-        carrito.getItems().add(nuevoItem);
+        return mapToResponse(carrito);
     }
 
-    public void actualizarCantidad(Long idProducto, Integer cantidad) {
+    public CarritoResponse actualizarCantidad(Long idProducto, Integer cantidad) {
 
-        for (DetalleCarrito item : carrito.getItems()) {
+        carrito.getItems().stream()
+                .filter(item -> item.getIdProducto().equals(idProducto))
+                .findFirst()
+                .ifPresent(item -> item.setCantidad(cantidad));
 
-            if (item.getIdProducto().equals(idProducto)) {
-
-                item.setCantidad(cantidad);
-
-                return;
-            }
-        }
+        return mapToResponse(carrito);
     }
 
-    public void eliminarProducto(Long idProducto) {
+    public CarritoResponse eliminarProducto(Long idProducto) {
 
-        carrito.getItems().removeIf(
-                item -> item.getIdProducto().equals(idProducto)
-        );
+        carrito.getItems()
+                .removeIf(item -> item.getIdProducto().equals(idProducto));
+
+        return mapToResponse(carrito);
     }
 
-    public void limpiarCarrito() {
+    public CarritoResponse limpiarCarrito() {
 
         carrito.getItems().clear();
+
+        return mapToResponse(carrito);
+    }
+
+    private CarritoResponse mapToResponse(Carrito carritoModel) {
+
+        CarritoResponse response = new CarritoResponse();
+
+        response.setId(1L);
+
+        response.setNombreUsuario("Usuario en sesión");
+
+        int totalItems = carritoModel.getItems()
+                .stream()
+                .mapToInt(DetalleCarrito::getCantidad)
+                .sum();
+
+        response.setTotalItems(totalItems);
+
+        response.setTotalPagar(0.0);
+
+        return response;
     }
 }

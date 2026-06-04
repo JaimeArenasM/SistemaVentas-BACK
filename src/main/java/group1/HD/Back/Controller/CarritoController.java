@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 package group1.HD.Back.Controller;
 
 import group1.HD.Back.Dto.CarritoItemDTO;
 import group1.HD.Back.Model.Carrito;
 import group1.HD.Back.Service.CarritoService;
+=======
+package group1.HD.Back.Controller; // Ojo: Verifica si tu carpeta es Controller o controller (con C mayúscula como en la imagen)
+
+import group1.HD.Back.Dto.Request.CarritoRequest; // Cambiamos el import
+import group1.HD.Back.Dto.Response.CarritoResponse; // Agregamos el import del Response
+import group1.HD.Back.service.CarritoService;
+>>>>>>> 941416a258aaff9c63d3b945424e730d25a0b4a0
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,53 +27,43 @@ public class CarritoController {
 
     // Obtener carrito
     @GetMapping
-    public ResponseEntity<Carrito> obtenerCarrito() {
-
-        Carrito carrito = carritoService.obtenerCarrito();
-
+    public ResponseEntity<CarritoResponse> obtenerCarrito() { // Cambiamos el retorno a CarritoResponse
+        CarritoResponse carrito = carritoService.obtenerCarrito();
         return ResponseEntity.ok(carrito);
     }
 
     // Agregar producto al carrito
     @PostMapping("/items")
-    public ResponseEntity<String> agregarProducto(
-            @Valid @RequestBody CarritoItemDTO dto
+    public ResponseEntity<CarritoResponse> agregarProducto( // Cambiamos el retorno a CarritoResponse
+            @Valid @RequestBody CarritoRequest request       // Cambiamos CarritoItemDTO a CarritoRequest
     ) {
-
-        carritoService.agregarProducto(dto);
-
-        return ResponseEntity.ok("Producto agregado al carrito");
+        CarritoResponse carritoActualizado = carritoService.agregarProducto(request);
+        return ResponseEntity.ok(carritoActualizado); // Ahora devolvemos el carrito actualizado, no un String
     }
 
     // Actualizar cantidad de un producto
     @PutMapping("/items/{idProducto}")
-    public ResponseEntity<String> actualizarCantidad(
+    public ResponseEntity<CarritoResponse> actualizarCantidad( // Cambiamos el retorno
             @PathVariable Long idProducto,
             @RequestParam Integer cantidad
     ) {
-
-        carritoService.actualizarCantidad(idProducto, cantidad);
-
-        return ResponseEntity.ok("Cantidad actualizada");
+        CarritoResponse carritoActualizado = carritoService.actualizarCantidad(idProducto, cantidad);
+        return ResponseEntity.ok(carritoActualizado);
     }
 
     // Eliminar producto del carrito
     @DeleteMapping("/items/{idProducto}")
-    public ResponseEntity<String> eliminarProducto(
+    public ResponseEntity<CarritoResponse> eliminarProducto( // Cambiamos el retorno
             @PathVariable Long idProducto
     ) {
-
-        carritoService.eliminarProducto(idProducto);
-
-        return ResponseEntity.ok("Producto eliminado del carrito");
+        CarritoResponse carritoActualizado = carritoService.eliminarProducto(idProducto);
+        return ResponseEntity.ok(carritoActualizado);
     }
 
     // Vaciar carrito completo
     @DeleteMapping("/limpiar")
-    public ResponseEntity<String> limpiarCarrito() {
-
-        carritoService.limpiarCarrito();
-
-        return ResponseEntity.ok("Carrito vaciado");
+    public ResponseEntity<CarritoResponse> limpiarCarrito() { // Cambiamos el retorno
+        CarritoResponse carritoVacio = carritoService.limpiarCarrito();
+        return ResponseEntity.ok(carritoVacio);
     }
 }
