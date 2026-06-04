@@ -1,4 +1,4 @@
-package group1.HD.Back.exception;
+package group1.HD.Back.Exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
