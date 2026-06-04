@@ -1,75 +1,47 @@
 package group1.HD.Back.Model;
+
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference; /* Importacion para evitar la serializacion infinita */
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity; /* Mejor llamarlos a todos de una vez , todos son muy utiles */
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-
 @Entity
-@Table(name = "venta")
+@Table(name = "VENTA")
 public class Venta {
 
-    @Id /* Esto indicara la llave primaria */
-    @GeneratedValue(strategy = GenerationType.IDENTITY) /*Esto hará que Postgree genere IDS de forma automática */
-    private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_venta")
+    private Integer idVenta; 
 
-    private LocalDateTime fecha;
+    @ManyToOne
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id_cliente", nullable = false)
+    private Cliente cliente;
 
+    @Column(name = "fecha_venta")
+    private LocalDateTime fechaVenta;
+
+    @Column(name = "total")
     private Double total;
 
-    @Enumerated(EnumType.STRING) /*Esto permitirá que se guarde como texto , perfecto apra que quede unicamente como Pendiente o Pagado */
-    private EstadoVenta estado;
-/* Relación uno-a-muchos:
-   - Una Venta puede tener varios DetalleVenta.
-   - Cada DetalleVenta está asociado a una única Venta.
-   - 'mappedBy = "venta"' indica que el dueño de la relación es la entidad DetalleVenta. */
+    @Column(name = "estado", length = 20)
+    private String estado; // "PENDIENTE", "PAGADO", "CANCELADO"
+
+    // Relación con los detalles
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
-    @JsonManagedReference /* Esto se usa para evitar la serializacion infinita , es decir que al serializar la venta no vuelva a serializar los detalles y asi sucesivamente */
     private List<DetalleVenta> detalles;
 
-    public Venta() {
-    }
-    public Long getId() {
-        return id;
-    }
+    public Venta() {}
 
-    public LocalDateTime getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDateTime fecha) {
-        this.fecha = fecha;
-    }
-
-    public Double getTotal() {
-        return total;
-    }
-
-    public void setTotal(Double total) {
-        this.total = total;
-    }
-
-    public EstadoVenta getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoVenta estado) {
-        this.estado = estado;
-    }
-    public List<DetalleVenta> getDetalles() {
-        return detalles;
-    }
-
-    public void setDetalles(List<DetalleVenta> detalles) {
-        this.detalles = detalles;
-    }
+    public Integer getIdVenta() { return idVenta; }
+    public void setIdVenta(Integer idVenta) { this.idVenta = idVenta; }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
+    public LocalDateTime getFechaVenta() { return fechaVenta; }
+    public void setFechaVenta(LocalDateTime fechaVenta) { this.fechaVenta = fechaVenta; }
+    public Double getTotal() { return total; }
+    public void setTotal(Double total) { this.total = total; }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
+    public List<DetalleVenta> getDetalles() { return detalles; }
+    public void setDetalles(List<DetalleVenta> detalles) { this.detalles = detalles; }
 }

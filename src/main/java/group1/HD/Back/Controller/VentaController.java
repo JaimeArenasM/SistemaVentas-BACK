@@ -1,58 +1,52 @@
 package group1.HD.Back.Controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import group1.HD.Back.Model.EstadoVenta;
-import group1.HD.Back.Model.Venta;
+import group1.HD.Back.Dto.Request.CrearVentaRequest;
+import group1.HD.Back.Dto.Response.VentaResponse;
 import group1.HD.Back.Service.VentaService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/ventas")
-@CrossOrigin("*")
 public class VentaController {
 
-    @Autowired
-    private VentaService ventaService;
+    private final VentaService ventaService;
 
+    public VentaController(VentaService ventaService) {
+        this.ventaService = ventaService;
+    }
+
+    // POST /api/ventas/checkout -> Crea una venta real para el cliente logueado
     @PostMapping("/checkout")
-    public Venta crearVenta() {
-        return ventaService.checkout();
+    public ResponseEntity<VentaResponse> crearVenta(
+            Authentication authentication, 
+            @Valid @RequestBody CrearVentaRequest request) {
+        
+        String correo = authentication.getName(); // Lee el token
+        return ResponseEntity.ok(ventaService.checkout(correo, request));
     }
 
-    @GetMapping /* Funcion del API : Listar ventas */
-    public List<Venta> obtenerVentas() {
-        return ventaService.obtenerVentas();
-    }
-    @GetMapping("/{id}") /* Funcion del API : Listar ventas por ID */
-    public Venta obtenerVentaPorId(@PathVariable Long id) {
-
-        return ventaService.obtenerVentaPorId(id);
+    // GET /api/ventas/mis-compras -> Muestra solo las compras del usuario que hace la petición
+    @GetMapping("/mis-compras")
+    public ResponseEntity<List<VentaResponse>> misCompras(Authentication authentication) {
+        String correo = authentication.getName(); // Lee el token
+        return ResponseEntity.ok(ventaService.obtenerMisCompras(correo));
     }
 
-    @PutMapping("/{id}/estado") /* Funcion del API : Cambiar estado de una venta(Pendiente o cancelada) */
-    public Venta cambiarEstado(
-            @PathVariable Long id,
-            @RequestParam EstadoVenta estado
-    ) {
-
-        return ventaService.cambiarEstado(id, estado);
+    // GET /api/ventas -> solo Admin Lista el historial de toda la tienda
+    @GetMapping
+    public ResponseEntity<List<VentaResponse>> obtenerTodasLasVentas() {
+        return ResponseEntity.ok(ventaService.obtenerTodasLasVentas());
     }
-    /*Esta opcion es temporal */
-    /* Se devolverán todas las ventas hasta implementar autenticacion */
-    /*donde haya una relacion de Usuario->Venta*/
-    @GetMapping("/mis-compras") /* Funcion del API : Listar las compras de un usuario */
-    public List<Venta> misCompras() {
 
-        return ventaService.obtenerVentas();
-        }
+    // PUT /api/ventas/5/estado?estado=PAGADO -> solo Admin Cambia el estado
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<VentaResponse> cambiarEstado(
+            @PathVariable Integer id,
+            @RequestParam String estado) {
+        return ResponseEntity.ok(ventaService.cambiarEstado(id, estado));
     }
+}
