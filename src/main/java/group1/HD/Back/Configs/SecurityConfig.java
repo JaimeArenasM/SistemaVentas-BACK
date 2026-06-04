@@ -36,7 +36,8 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                // Rutas públicas (Login, Registro y catálogo de productos)
-                .requestMatchers("/api/auth/**", "/api/productos/**").permitAll()
+              .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+               .requestMatchers("/api/auth/**", "/api/productos/**").permitAll()
                 // Rutas exclusivas del administrador
                 .requestMatchers("/api/usuarios/**").hasAuthority("admin")
                // Todo lo demás requiere estar autenticado
