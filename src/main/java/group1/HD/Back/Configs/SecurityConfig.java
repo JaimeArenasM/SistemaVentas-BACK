@@ -28,26 +28,27 @@ public class SecurityConfig {
         this.jwtFilter = jwtFilter;
     }
 
-  @Bean
+@Bean
 public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                    // 1. Permitir explícitamente métodos OPTIONS (CORS pre-flight)
-                    .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                    // 2. Rutas de Swagger y documentación
-                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**").permitAll()
-                    // 3. Rutas públicas de negocio
-                    .requestMatchers("/api/auth/**", "/api/productos/**").permitAll()
-                    // 4. Rutas protegidas
-                    .requestMatchers("/api/usuarios/**").hasAuthority("admin")
-                    .anyRequest().authenticated())
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .csrf(csrf -> csrf.disable())
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(auth -> auth
+            // FORZAMOS LA APERTURA TOTAL DE SWAGGER SIN NINGUNA RESTRICCIÓN
+            .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/webjars/**").permitAll()
+            .requestMatchers("/api/auth/**", "/api/productos/**").permitAll()
+            .requestMatchers("/api/usuarios/**").hasAuthority("admin")
+            .anyRequest().authenticated()
+        );
+    
+    // AQUÍ ESTÁ EL CAMBIO: Eliminamos temporalmente el .addFilterBefore
+    // Si quitando esto Swagger abre, sabremos que el problema es el JwtFilter
+    // .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); 
 
     return http.build();
 }
+
 
 
     @Bean
