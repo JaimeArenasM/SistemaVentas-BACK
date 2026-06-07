@@ -32,8 +32,9 @@ public class Usuario {
     @Column(name = "tipo_usuario",nullable = false,length = 20)
     private String tipoUsuario;
 
+    // 👇 SE AÑADIÓ ="activo" COMO VALOR POR DEFECTO 👇
     @Column(name = "estado", nullable = false,length = 20)
-    private String estado;
+    private String estado = "activo"; 
 
     @CreationTimestamp
     @Column(name = "fecha_registro",updatable = false)
@@ -42,10 +43,8 @@ public class Usuario {
     @OneToOne(mappedBy = "usuario",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Cliente cliente;
 
-
     public Usuario() {
     }
-
 
     public Integer getIdUsuario() {
         return this.idUsuario;
@@ -102,5 +101,4 @@ public class Usuario {
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
-
 }
