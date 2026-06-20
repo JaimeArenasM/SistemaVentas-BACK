@@ -33,7 +33,7 @@ public class AuthService {
         this.jwt = jwt;
     }
 
-    @Transactional
+ @Transactional
     public AuthResponse registrarCliente(RegistroRequest request) {
         if (usuarioRepository.existsByCorreo(request.getCorreo())) {
             throw new RuntimeException("El correo ya está registrado.");
@@ -42,24 +42,34 @@ public class AuthService {
             throw new RuntimeException("El DNI ya está registrado.");
         }
 
+        // 1. Creamos el Usuario
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setCorreo(request.getCorreo());
         nuevoUsuario.setContrasenaHash(passwordEncoder.encode(request.getPassword()));
         nuevoUsuario.setTipoUsuario("cliente");
         nuevoUsuario.setEstado("activo");
-        usuarioRepository.save(nuevoUsuario);
 
+        // 2. Creamos el Cliente
         Cliente nuevoCliente = new Cliente();
-        nuevoCliente.setUsuario(nuevoUsuario);
         nuevoCliente.setNombres(request.getNombres());
         nuevoCliente.setApellidos(request.getApellidos());
         nuevoCliente.setDni(request.getDni());
         nuevoCliente.setTelefono(request.getTelefono());
         nuevoCliente.setDireccion(request.getDireccion());
-        clienteRepository.save(nuevoCliente);
 
-        String token = jwt.generateToken(nuevoUsuario.getCorreo(), nuevoUsuario.getTipoUsuario());
-        return new AuthResponse(token, "cliente", nuevoCliente.getNombres());
+        // 3. ENLACE BIDIRECCIONAL (La clave del éxito)
+        // Le decimos al cliente quién es su usuario, y al usuario quién es su cliente
+        nuevoCliente.setUsuario(nuevoUsuario);
+        nuevoUsuario.setCliente(nuevoCliente);
+
+        // 4. Guardamos SOLO el Usuario. 
+        // Gracias a tu CascadeType.ALL, Hibernate detectará al cliente y lo guardará automáticamente en su tabla
+        Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
+
+        // 5. Generamos el token usando el usuario ya consolidado
+        String token = jwt.generateToken(usuarioGuardado.getCorreo(), usuarioGuardado.getTipoUsuario());
+        
+        return new AuthResponse(token, usuarioGuardado.getTipoUsuario(), usuarioGuardado.getCliente().getNombres());
     }
 
     public AuthResponse login(IniciarSesionRequest request) {

@@ -3,12 +3,11 @@ package group1.HD.Back.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import group1.HD.Back.Model.Cliente;
 import java.util.Optional;
 
-@Repository
+
 public interface ClienteRepository extends JpaRepository<Cliente, Integer> { // Cambiado a Integer
 
     boolean existsByDni(String dni);
