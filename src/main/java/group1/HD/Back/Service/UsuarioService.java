@@ -20,6 +20,37 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
+@Transactional
+    public UsuarioResponse actualizarUsuario(Integer idUsuario, group1.HD.Back.Dto.Request.RegistroRequest request) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // 1. Actualizamos los datos base (Comunes para Admin y Cliente)
+        usuario.setCorreo(request.getCorreo());
+
+        // 2. Lógica Condicional: ¿Es un cliente con datos biológicos?
+        if (usuario.getCliente() != null) {
+            usuario.getCliente().setNombres(request.getNombres());
+            usuario.getCliente().setApellidos(request.getApellidos());
+            usuario.getCliente().setDni(request.getDni());
+            usuario.getCliente().setTelefono(request.getTelefono());
+            usuario.getCliente().setDireccion(request.getDireccion());
+        }
+
+        // 3. Guardamos los cambios
+        Usuario guardado = usuarioRepository.save(usuario);
+        
+        String nombre = (guardado.getCliente() != null) ? guardado.getCliente().getNombres() : "Administrador";
+
+        return new UsuarioResponse(
+                guardado.getIdUsuario(), 
+                guardado.getCorreo(),
+                guardado.getTipoUsuario(),
+                guardado.getEstado(), 
+                nombre
+        );
+    }
+
     /*Devuelve todos los usuarios empacados en el DTO */
     public List<UsuarioResponse> listarTodos(){
         return usuarioRepository.findAll().stream().map(u ->{

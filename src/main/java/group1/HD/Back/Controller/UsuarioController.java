@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import group1.HD.Back.Dto.Request.RegistroRequest;
 import group1.HD.Back.Dto.Response.UsuarioResponse;
 import group1.HD.Back.Service.UsuarioService;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -27,6 +30,13 @@ public class UsuarioController {
     public ResponseEntity<List<UsuarioResponse>> listarTodos() {
         return ResponseEntity.ok(usuarioService.listarTodos());
     }
+
+     @PutMapping("/{id}")
+     public ResponseEntity<UsuarioResponse> actualizarUsuario
+     (@PathVariable Integer id, @RequestBody RegistroRequest request) {
+                  
+         return ResponseEntity.ok(usuarioService.actualizarUsuario(id, request));
+     }
 
     // PUT /api/usuarios/5/estado?estado=bloqueado
     @PutMapping("/{id}/estado")
