@@ -1,5 +1,8 @@
 package group1.HD.Back.Service;
 
+import java.util.Optional;
+import java.util.Random;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,8 +12,10 @@ import group1.HD.Back.Dto.Request.IniciarSesionRequest;
 import group1.HD.Back.Dto.Request.RegistroRequest;
 import group1.HD.Back.Dto.Response.AuthResponse;
 import group1.HD.Back.Model.Cliente;
+import group1.HD.Back.Model.ReseteoContraseña;
 import group1.HD.Back.Model.Usuario;
 import group1.HD.Back.Repository.ClienteRepository;
+import group1.HD.Back.Repository.ReseteoContraseñaRespository;
 import group1.HD.Back.Repository.UsuarioRepository;
 import group1.HD.Back.Security.Jwt;
 import jakarta.transaction.Transactional;
@@ -22,16 +27,20 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final Jwt jwt;
+    private final ReseteoContraseñaRespository tokenRepository;
+    private final EmailService emailService;
 
-    public AuthService(UsuarioRepository usuarioRepository, ClienteRepository clienteRepository,
-                       PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
-                       Jwt jwt) {
+
+    public AuthService(UsuarioRepository usuarioRepository, ClienteRepository clienteRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, Jwt jwt, ReseteoContraseñaRespository tokenRepository, EmailService emailService) {
         this.usuarioRepository = usuarioRepository;
         this.clienteRepository = clienteRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwt = jwt;
+        this.tokenRepository = tokenRepository;
+        this.emailService = emailService;
     }
+   
 
  @Transactional
     public AuthResponse registrarCliente(RegistroRequest request) {
@@ -83,5 +92,47 @@ public class AuthService {
         String nombres = usuario.getTipoUsuario().equals("admin") ? "Administrador" : usuario.getCliente().getNombres();
         
         return new AuthResponse(token, usuario.getTipoUsuario(), nombres);
+    }
+
+    /*PARA RECUPERAR CONTRASEÑA */
+    // Método 1: Genera el código y manda el correo
+    @Transactional
+    public void solicitarRecuperacionPassword(String correo) {
+        Usuario usuario = usuarioRepository.buscarPorCorreo(correo)
+                .orElseThrow(() -> new RuntimeException("No existe ninguna cuenta con este correo."));
+
+        // Si ya tenía un código anterior sin usar, lo borramos para no acumular basura
+        Optional<ReseteoContraseña> tokenExistente = tokenRepository.findByUsuario(usuario);
+        tokenExistente.ifPresent(tokenRepository::delete);
+
+        // Generamos un código aleatorio de 6 dígitos (ej: 048592)
+        String codigoGenerado = String.format("%06d", new Random().nextInt(999999));
+
+        // Lo guardamos en la base de datos (se auto-configura para expirar en 15 min)
+        ReseteoContraseña miToken = new ReseteoContraseña(codigoGenerado, usuario);
+        tokenRepository.save(miToken);
+
+        // Llamamos al cartero
+        emailService.enviarCodigoRecuperacion(usuario.getCorreo(), codigoGenerado);
+    }
+
+    // Método 2: Verifica el código y cambia la contraseña
+    @Transactional
+    public void cambiarPasswordConToken(String token, String nuevaPassword) {
+        ReseteoContraseña resetToken = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("El código ingresado es incorrecto."));
+
+        if (resetToken.estaExpirado()) {
+            tokenRepository.delete(resetToken);
+            throw new RuntimeException("El código ha expirado. Por favor, solicita uno nuevo.");
+        }
+
+        // Si todo está bien, le cambiamos la contraseña al usuario
+        Usuario usuario = resetToken.getUsuario();
+        usuario.setContrasenaHash(passwordEncoder.encode(nuevaPassword));
+        usuarioRepository.save(usuario);
+
+        // Destruimos el código para que no se pueda volver a usar
+        tokenRepository.delete(resetToken);
     }
 }
