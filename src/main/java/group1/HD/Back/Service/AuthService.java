@@ -113,7 +113,12 @@ public class AuthService {
         tokenRepository.save(miToken);
 
         // Llamamos al cartero
-        emailService.enviarCodigoRecuperacion(usuario.getCorreo(), codigoGenerado);
+        //emailService.enviarCodigoRecuperacion(usuario.getCorreo(), codigoGenerado);
+        System.out.println("=======================================================");
+    System.out.println(" SIMULACRO DE CORREO: Se solicitó recuperación");
+    System.out.println(" CORREO DESTINO: " + usuario.getCorreo());
+    System.out.println(" CÓDIGO SECRETO: " + codigoGenerado);
+    System.out.println("=======================================================");
     }
 
     // Método 2: Verifica el código y cambia la contraseña
