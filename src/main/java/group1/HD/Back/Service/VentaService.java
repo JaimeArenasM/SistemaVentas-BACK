@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // Importante asegurar esta importación
 
 import group1.HD.Back.Dto.Request.CrearVentaRequest;
 import group1.HD.Back.Dto.Request.DetalleVentaRequest;
@@ -19,7 +20,6 @@ import group1.HD.Back.Model.Venta;
 import group1.HD.Back.Repository.ClienteRepository;
 import group1.HD.Back.Repository.ProductoRepository;
 import group1.HD.Back.Repository.VentaRepository;
-import jakarta.transaction.Transactional;
 
 @Service
 public class VentaService {
@@ -52,6 +52,16 @@ public class VentaService {
         for (DetalleVentaRequest item : request.getDetalles()) {
             Producto producto = productoRepository.findById(item.getIdProducto())
                     .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+            // --- LÓGICA DE STOCK ---
+            if (producto.getStock() < item.getCantidad()) {
+                throw new RuntimeException("Stock insuficiente para: " + producto.getNombre());
+            }
+            
+            // Restamos el stock
+            producto.setStock(producto.getStock() - item.getCantidad());
+            productoRepository.save(producto); // Guardamos la actualización del producto
+            // -----------------------
 
             DetalleVenta detalle = new DetalleVenta();
             detalle.setVenta(venta);
@@ -102,12 +112,12 @@ public class VentaService {
                 BigDecimal subtotal = d.getPrecioUnitario().multiply(cantidadBD);
                 
                 return new DetalleVentaResponse(
-                        d.getProducto().getIdProducto(), 
+                        d.getProducto().getIdProducto(),
                         d.getProducto().getNombre(), 
                         d.getCantidad(), 
                         d.getPrecioUnitario(), 
                         subtotal,
-                        d.getProducto().getImagenUrl() 
+                        d.getProducto().getImagenUrl()
                 );
             })
             .collect(Collectors.toList());
