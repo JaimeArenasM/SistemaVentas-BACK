@@ -28,17 +28,15 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final Jwt jwt;
     private final ReseteoContraseñaRespository tokenRepository;
-    private final EmailService emailService;
 
 
-    public AuthService(UsuarioRepository usuarioRepository, ClienteRepository clienteRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, Jwt jwt, ReseteoContraseñaRespository tokenRepository, EmailService emailService) {
+    public AuthService(UsuarioRepository usuarioRepository, ClienteRepository clienteRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, Jwt jwt, ReseteoContraseñaRespository tokenRepository) {
         this.usuarioRepository = usuarioRepository;
         this.clienteRepository = clienteRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwt = jwt;
         this.tokenRepository = tokenRepository;
-        this.emailService = emailService;
     }
    
 
@@ -82,13 +80,21 @@ public class AuthService {
     }
 
     public AuthResponse login(IniciarSesionRequest request) {
+        // 1. Buscamos al usuario PRIMERO
+        Usuario usuario = usuarioRepository.buscarPorCorreo(request.getCorreo())
+                .orElseThrow(() -> new RuntimeException("Credenciales incorrectas."));
+
+        // 2. Validamos el estado ANTES de que Spring Security lance el 403
+        if ("bloqueado".equalsIgnoreCase(usuario.getEstado())) {
+            throw new RuntimeException("CUENTA_BLOQUEADA"); // Palabra clave para Angular
+        }
+
+        // 3. Autenticación normal si todo está bien
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getCorreo(), request.getPassword())
         );
 
-        Usuario usuario = usuarioRepository.buscarPorCorreo(request.getCorreo()).orElseThrow();
         String token = jwt.generateToken(usuario.getCorreo(), usuario.getTipoUsuario());
-        
         String nombres = usuario.getTipoUsuario().equals("admin") ? "Administrador" : usuario.getCliente().getNombres();
         
         return new AuthResponse(token, usuario.getTipoUsuario(), nombres);

@@ -111,16 +111,18 @@ public class CarritoService {
         return mapearADto(carritoRepository.save(carrito));
     }
 
-    // 6. MAPEO A DTO Y CÁLCULO DEL TOTAL
+   // 6. MAPEO A DTO Y CÁLCULO DEL TOTAL
     private CarritoResponse mapearADto(Carrito carrito) {
         BigDecimal totalCarrito = BigDecimal.ZERO;
         
         List<DetalleVentaResponse> itemsDto = carrito.getItems().stream().map(item -> {
             return new DetalleVentaResponse(
+                    item.getProducto().getIdProducto(), // Enviamos el ID al frontend
                     item.getProducto().getNombre(),
                     item.getCantidad(),
                     item.getProducto().getPrecio(),
-                    item.getSubtotal()
+                    item.getSubtotal(),
+                    item.getProducto().getImagenUrl()  // Enviamos la foto al frontend
             );
         }).collect(Collectors.toList());
 

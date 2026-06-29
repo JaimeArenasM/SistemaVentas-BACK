@@ -95,7 +95,6 @@ public class VentaService {
         return mapearADto(ventaRepository.save(venta));
     }
 
-    // --- AQUÍ ESTÁ LA MAGIA FINAL ---
     private VentaResponse mapearADto(Venta v) {
         List<DetalleVentaResponse> detallesDto = v.getDetalles().stream()
             .map(d -> {
@@ -103,15 +102,16 @@ public class VentaService {
                 BigDecimal subtotal = d.getPrecioUnitario().multiply(cantidadBD);
                 
                 return new DetalleVentaResponse(
+                        d.getProducto().getIdProducto(), 
                         d.getProducto().getNombre(), 
                         d.getCantidad(), 
                         d.getPrecioUnitario(), 
-                        subtotal
+                        subtotal,
+                        d.getProducto().getImagenUrl() 
                 );
             })
             .collect(Collectors.toList());
 
-        // Ahora el constructor envía los 7 parámetros, igual que en tu VentaResponse
         return new VentaResponse(
             v.getIdVenta(), 
             v.getCliente().getNombres(), 
