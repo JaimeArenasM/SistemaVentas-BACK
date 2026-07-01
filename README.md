@@ -21,7 +21,7 @@ Backend RESTful profesional desarrollado con Spring Boot para la gestión integr
 | **Isaac Livaque** | Gestión de Usuarios, Clientes, Autenticación JWT y Spring Security, Despliegue en Render y Docker | `feature-usuario`, `feature-seguridad`, `feature-conexionBD` |
 | **César U.** | Gestión de Carrito y Detalle Carrito | `feature-carrito` |
 | **Sebastián A.** | Gestión de Categorías y Productos, Paginación e Integración | `feature-categoria`, `feature-producto` |
-| **Jaime A.** | Gestión de Ventas, Lógica Transaccional y Detalle Venta | `feature-ventas` |
+| **Jaime A.** | Prueba de Github Actions con Render, Gestión de Ventas, Lógica Transaccional y Detalle Venta  | `feature-ventas` |
 | **Casey R.** | Mejora de interfaz gráfica, experiencia de usuario (UI/UX) e integración Frontend | `Soporte Frontend` |
 
 </div>
